@@ -376,7 +376,7 @@ func (c *Cluster) deleteMachine(machine *Machine, i int) error {
 
 	if machine.IsIgnite() {
 		if machine.IsStarted() {
-			exitCode, err := execForeground("ignite", "stop", machine.name)
+			exitCode, err := execForeground("ignite", "log", machine.name)
 			if err != nil || exitCode != 0 {
 				return fmt.Errorf("unable to stop ignite instance: exitCode: %d err: %v", exitCode, err)
 			}
