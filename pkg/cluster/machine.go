@@ -121,6 +121,6 @@ func (m *Machine) HostPort(containerPort int) (hostPort int, err error) {
 }
 
 func (m *Machine) IsIgnite() bool {
-	log.Infof("IsIgnite? %T\n", m.spec.Ignite != nil)
-	return m.spec.Ignite != nil
+	log.Infof("IsIgnite? %t\n", m.spec.Backend == igniteName)
+	return m.spec.Backend == igniteName
 }
