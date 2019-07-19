@@ -31,6 +31,10 @@ type Machine struct {
 	machineCache
 }
 
+const (
+	igniteName = "ignite"
+)
+
 // ContainerName is the name of the running container corresponding to this
 // Machine.
 func (m *Machine) ContainerName() string {
@@ -114,5 +118,5 @@ func (m *Machine) HostPort(containerPort int) (hostPort int, err error) {
 }
 
 func (m *Machine) IsIgnite() bool {
-	return m.IsIgnite()
+	return m.spec.Ignite != nil
 }
