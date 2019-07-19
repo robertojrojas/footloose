@@ -224,7 +224,7 @@ func (c *Cluster) createMachine(machine *Machine, i int) error {
 		cmd = machine.spec.Cmd
 	}
 
-	if machine.spec.Backend == "ignite" {
+	if machine.IsIgnite() {
 		pubKeyPath := c.spec.Cluster.PrivateKey + ".pub"
 		if !filepath.IsAbs(pubKeyPath) {
 			wd, err := os.Getwd()
@@ -368,9 +368,25 @@ func (c *Cluster) Create() error {
 
 func (c *Cluster) deleteMachine(machine *Machine, i int) error {
 	name := machine.ContainerName()
+
 	if !machine.IsCreated() {
 		log.Infof("Machine %s hasn't been created...", name)
 		return nil
+	}
+
+	if machine.IsIgnite() {
+		if machine.IsStarted() {
+			exitCode, err := execForeground("ignite", "stop", machine.name)
+			if err != nil || exitCode != 0 {
+				return fmt.Errorf("unable to stop ignite instance: exitCode: %d err: %v", exitCode, err)
+			}
+		}
+		runArgs := []string{
+			"rm",
+			machine.name,
+		}
+		_, err := executeCommand("ignite", runArgs...)
+		return err
 	}
 
 	if machine.IsStarted() {

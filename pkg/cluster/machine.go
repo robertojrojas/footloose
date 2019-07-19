@@ -34,7 +34,7 @@ type Machine struct {
 // ContainerName is the name of the running container corresponding to this
 // Machine.
 func (m *Machine) ContainerName() string {
-	if m.spec.Backend == "ignite" {
+	if m.IsIgnite() {
 		filter := fmt.Sprintf(`label=ignite.name=%s`, m.name)
 		cid, err := executeCommand("docker", "ps", "-q", "-f", filter)
 		if err != nil || len(cid) == 0 {
@@ -53,6 +53,14 @@ func (m *Machine) Hostname() string {
 // IsCreated returns if a machine is has been created. A created machine could
 // either be running or stopped.
 func (m *Machine) IsCreated() bool {
+	if m.IsIgnite() {
+		exitCode, err := execForeground("ignite", "logs", m.name)
+		if err != nil || exitCode != 0 {
+			return false
+		}
+		return true
+	}
+
 	res, _ := docker.Inspect(m.name, "{{.Name}}")
 	if len(res) > 0 && len(res[0]) > 0 {
 		return true
@@ -62,6 +70,14 @@ func (m *Machine) IsCreated() bool {
 
 // IsStarted returns if a machine is currently started or not.
 func (m *Machine) IsStarted() bool {
+	if m.IsIgnite() {
+		exitCode, err := execForeground("ignite", "logs", m.name)
+		if err != nil || exitCode != 0 {
+			return false
+		}
+		return true
+	}
+
 	res, _ := docker.Inspect(m.name, "{{.State.Running}}")
 	parsed, _ := strconv.ParseBool(strings.Trim(res[0], `'`))
 	if parsed {
@@ -95,4 +111,8 @@ func (m *Machine) HostPort(containerPort int) (hostPort int, err error) {
 		return -1, errors.Wrap(err, "hostport: failed to parse string to int")
 	}
 	return m.ports[containerPort], nil
+}
+
+func (m *Machine) IsIgnite() bool {
+	return m.IsIgnite()
 }

@@ -7,6 +7,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const (
+	igniteName = "ignite"
+)
+
 // Volume is a volume that can be attached to a Machine.
 type Volume struct {
 	// Type is the volume type. One of "bind" or "volume".
@@ -85,6 +89,10 @@ func (m *Machine) IgniteConfig() Ignite {
 		i.Kernel = "weaveworks/ignite-kernel:4.19.47"
 	}
 	return i
+}
+
+func (m *Machine) IsIgnite() bool {
+	return strings.ToLower(m.Backend) == igniteName
 }
 
 // Ignite holds ignite-specific config
