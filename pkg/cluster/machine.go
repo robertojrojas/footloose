@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/weaveworks/footloose/pkg/config"
 	"github.com/weaveworks/footloose/pkg/docker"
@@ -58,10 +59,10 @@ func (m *Machine) Hostname() string {
 // either be running or stopped.
 func (m *Machine) IsCreated() bool {
 	if m.IsIgnite() {
-		fmt.Println("Checking Ignite Logs...")
+		log.Infof("Checking Ignite Logs...\n")
 		exitCode, err := execForeground("ignite", "logs", m.name)
 		if err != nil || exitCode != 0 {
-			fmt.Printf("Ignite log error - err: %d - %v\n", exitCode, err)
+			log.Infof("Ignite log error - err: %d - %v\n", exitCode, err)
 			return false
 		}
 		return true
