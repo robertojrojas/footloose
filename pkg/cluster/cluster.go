@@ -172,8 +172,8 @@ func executeCommand(command string, args ...string) (string, error) {
 func execForeground(command string, args ...string) (int, error) {
 	cmd := exec2.Command(command, args...)
 	cmd.Stdin = os.Stdin
-	cmd.Stdout = ioutil.Discard
-	cmd.Stderr = ioutil.Discard
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	cmdArgs := strings.Join(cmd.Args, " ")
 
@@ -376,7 +376,7 @@ func (c *Cluster) deleteMachine(machine *Machine, i int) error {
 
 	if machine.IsIgnite() {
 		if machine.IsStarted() {
-			exitCode, err := execForeground("ignite", "log", machine.name)
+			exitCode, err := execForeground("ignite", "logs", machine.name)
 			if err != nil || exitCode != 0 {
 				return fmt.Errorf("unable to stop ignite instance: exitCode: %d err: %v", exitCode, err)
 			}
