@@ -456,6 +456,7 @@ func (c *Cluster) gatherMachines() (machines []*Machine, err error) {
 		if m.IsCreated() {
 			inspect, err := c.gatherMachineDetails(m.name)
 			if err != nil {
+				log.Infof("Failed to get machine details %v\n", err)
 				return machines, err
 			}
 			// Set Ports
