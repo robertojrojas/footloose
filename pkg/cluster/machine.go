@@ -58,8 +58,10 @@ func (m *Machine) Hostname() string {
 // either be running or stopped.
 func (m *Machine) IsCreated() bool {
 	if m.IsIgnite() {
+		fmt.Println("Checking Ignite Logs...")
 		exitCode, err := execForeground("ignite", "logs", m.name)
 		if err != nil || exitCode != 0 {
+			fmt.Printf("Ignite log error - err: %d - %v\n", exitCode, err)
 			return false
 		}
 		return true
