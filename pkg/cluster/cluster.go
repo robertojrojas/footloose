@@ -173,7 +173,7 @@ func execForeground(command string, args ...string) (int, error) {
 	cmd := exec2.Command(command, args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	//cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	cmdArgs := strings.Join(cmd.Args, " ")
 
