@@ -2,6 +2,9 @@ package main
 
 import (
 	"os"
+	"path"
+	"path/filepath"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -17,11 +20,23 @@ var footloose = &cobra.Command{
 }
 
 func configFile(f string) string {
-	env := os.Getenv("FOOTLOOSE_CONFIG")
-	if env != "" && f == Footloose{
-		return env
+	fp := f
+	if env := os.Getenv("FOOTLOOSE_CONFIG"); env != "" && f == Footloose {
+		fp = env
 	}
-	return f
+	return toAbs(fp)
+}
+
+func toAbs(p string) string {
+	ap := p
+	if !path.IsAbs(ap) {
+		ap, err := filepath.Abs(ap)
+		// if Abs reports and error just return the original path 'p'
+		if err != nil {
+			ap = p
+		}
+	}
+	return ap
 }
 
 func main() {
